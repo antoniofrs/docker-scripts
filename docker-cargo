@@ -1,0 +1,52 @@
+#!/bin/bash
+
+export_data() {
+  echo "Exporting docker volumes"
+
+  export_dir="volumes_export"
+  mkdir -p "$export_dir"
+
+  for volume in "$@"; do
+    echo "Esporting volume: $volume"
+     docker run --rm -v "$volume":/"$volume" -v "$(pwd)/$export_dir":/export alpine tar -czf /export/"$volume".tar.gz -C / "$volume"
+  done
+
+  echo "Export completed!"
+}
+
+
+import_data() {
+  if [[ $# -eq 0 ]]; then
+    echo "Please specify one or more tar.gz files"
+    exit 1
+  fi
+
+  for tar_file in "$@"; do
+    echo "Importing volume: $tar_file"
+    volume_name=$(basename "$tar_file" .tar.gz)
+    docker volume create "$volume_name" > /dev/null
+    docker run --rm -v "$volume_name":/"$volume_name" -v "$(pwd)/$tar_file":/import alpine sh -c "tar -xzf /import/$tar_file -C /$volume_name 2>/dev/null"
+  done
+
+  echo "Import Completed!"
+}
+
+
+
+
+
+if [[ $# -eq 0 ]]; then
+  echo "Utilizzo: $0 [export|import] [argomenti]"
+  exit 1
+fi
+
+if [[ $1 == "export" ]]; then
+  shift
+  export_data "$@"
+elif [[ $1 == "import" ]]; then
+  shift
+  import_data "$@"
+else
+  echo "Argomento non valido. Utilizzo: $0 [export|import] [argomenti]"
+  exit 1
+fi
