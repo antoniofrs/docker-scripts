@@ -32,11 +32,8 @@ import_data() {
 }
 
 
-
-
-
 if [[ $# -eq 0 ]]; then
-  echo "Utilizzo: $0 [export|import] [argomenti]"
+  echo "Usage: $0 [export|import] [args]"
   exit 1
 fi
 
@@ -47,6 +44,6 @@ elif [[ $1 == "import" ]]; then
   shift
   import_data "$@"
 else
-  echo "Argomento non valido. Utilizzo: $0 [export|import] [argomenti]"
+  echo "Invalid argument(s). Usage: $0 [export|import] [args]"
   exit 1
 fi
