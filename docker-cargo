@@ -8,7 +8,7 @@ export_data() {
 
   for volume in "$@"; do
     echo "Esporting volume: $volume"
-     docker run --rm -v "$volume":/"$volume" -v "$(pwd)/$export_dir":/export alpine tar -czf /export/"$volume".tar.gz -C / "$volume"
+    docker run --rm -v "$volume":/"$volume" -v "$(pwd)/$export_dir":/export alpine tar -czf /export/"$volume".tar.gz -C / "$volume"
   done
 
   echo "Export completed!"
